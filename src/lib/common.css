@@ -1,0 +1,25 @@
+body {
+    font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+body {
+    background-color: #282629;
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+a:link, a:visited, a:hover, a:active {
+    color: #8be9fd;
+    background-color: transparent;
+    text-decoration: underline 0.1em #8be9fd;
+    text-decoration-style: wavy;
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color 300ms, text-underline-offset 300ms;
+}
+
+a:hover {
+    text-decoration-color: #bd93f9;
+    text-underline-offset: 0.4em;
+}
+

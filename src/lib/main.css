@@ -1,0 +1,15 @@
+body {
+    background-color: #282629;
+    margin: 0;
+    padding: 0;
+}
+
+button {
+    background-color: #656066;
+    color: white;
+    margin: .2em;
+    border: .1em #282629;
+    border-radius: .5em;
+    font-size: 12pt;
+    padding: .1em;
+}
