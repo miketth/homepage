@@ -6,7 +6,7 @@
 </script>
 
 <div transition:fade>
-  <h1>Thanks for being the {n}th consumer!</h1>
+  <h1>Thanks for being the {n}th customer!</h1>
   <video autoplay controls>
     <source src="{rickvid}" type="video/mp4">
   </video>

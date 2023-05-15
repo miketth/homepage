@@ -2,11 +2,21 @@ body {
     font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
-body {
+body > div {
     background-color: #282629;
     margin: 0;
     padding: 0;
     color: white;
+    display: grid !important;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+body > div > div {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
 }
 
 a:link, a:visited, a:hover, a:active {
