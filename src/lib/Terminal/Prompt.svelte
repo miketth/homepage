@@ -7,7 +7,7 @@
   const dir = pwd
 </script>
 
-<div class="prompt">{user}@{host}:{dir.name}$</div>
+<div class="prompt">{user}@{host}:{dir}$</div>
 
 <style>
   .prompt {

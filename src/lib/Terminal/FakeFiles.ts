@@ -1,64 +1,61 @@
-const files =  {
-  "folder": {},
+import { Volume } from 'memfs-browser'
+
+
+const vol = Volume.fromJSON({
   "welcome.txt": "Welcome to my website!",
-}
+  "test/asd.txt": "This is asd",
+  "test/test2/lol.txt": "oh hi",
+})
 
-type Node = Directory|File
+export let pwd = "/"
 
-class Directory {
-  constructor(
-    public name: string,
-    public files: Map<string, Node>,
-  ) {}
-
-  public mode = "drwxrwxrwx"
-}
-
-class File {
-  constructor(
-    public name: string,
-    public data: string,
-  ) {}
-
-  public mode = "-rwxrwxrwx"
-}
-
-function process(name: string, obj: object|string, upper: Directory|null = null): Node {
-  if (typeof obj === 'string'){
-    return new File(name, obj)
+function abs(filename: string): string {
+  if (filename.length < 1) return "/"
+  if (filename[0] == "/") { // absolute
+    return filename
+  } else {
+    return `${pwd}/${filename}`
   }
-
-  const dir = new Directory(name, new Map<string, Node>())
-  for (const [key, value] of Object.entries(obj)) {
-    dir.files.set(key, process(key, value, dir))
-  }
-
-  dir.files.set(".", dir)
-  dir.files.set("..", upper || dir)
-
-  return dir
 }
-
-export let pwd = (() => process("/", files))() as Directory
 
 export function ls(args: string[]): string {
-  return Array.from(pwd.files).map(([key, val]) => (`${val.mode} ${key}`)).join("\n")
+  try {
+    let path = pwd
+    if (args.length >= 1) {
+      path = abs(args[0])
+    }
+
+    return vol.readdirSync(path, {withFileTypes: true}).map(file => {
+      if (file.isDirectory()) {
+        return `drwxrwxrwx ${file.name}`
+      } else {
+        return `-rwxrwxrwx ${file.name}`
+      }
+    }).join("\n")
+  } catch (e) {
+    return "ls: file not found"
+  }
+
 }
 
 export function cd(args: string[]): string {
-  const location = args[0]
-  if (!pwd.files.has(location)) return `Folder ${location} not found`
-  const node = pwd.files.get(location)
-  if (node instanceof Directory) {
-    pwd = node
-    return ""
-  } else {
-    return `${location} is not a directory`
+  if (args.length != 1) {
+    return "usage: cd <path>"
   }
+  pwd = vol.realpathSync(abs(args[0]))
+  return ""
 }
 
 export function cat(args: string[]): string {
-  return "TODO: implement feature"
+  if (args.length < 1) {
+    return "usage: cat <filename> [filenames...]"
+  }
+  try {
+    return vol.readFileSync(abs(args[0]), 'utf-8')
+  } catch (e) {
+    //todo
+    return "cat: file not found"
+  }
 }
 
 export function rm(args: string[]): string {
