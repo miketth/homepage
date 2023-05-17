@@ -36,7 +36,7 @@ async function keypress(ev) {
     command = ""
 
     await tick()
-    input.focus()
+    input?.focus()
   }
 }
 
