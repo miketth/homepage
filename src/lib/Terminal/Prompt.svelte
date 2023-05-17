@@ -1,8 +1,7 @@
 <script>
   import { pwd } from "$lib/Terminal/FakeFiles.ts";
 
-  let user = "guest"
-  let host = "website"
+  import { user, host } from "$lib/Terminal/CommonData.ts";
 
   const dir = pwd
 </script>

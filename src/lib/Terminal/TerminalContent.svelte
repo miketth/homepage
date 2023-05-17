@@ -80,7 +80,6 @@ async function keypress(ev) {
   }
 
   .in {
-      width: 100%;
       margin: 0;
       height: 1.1em;
       padding: 0;
@@ -89,6 +88,7 @@ async function keypress(ev) {
       font-family: monospace;
       color: white;
       font-size: 12pt;
+      flex-grow: 1;
   }
   .in:focus {
       outline: none;
