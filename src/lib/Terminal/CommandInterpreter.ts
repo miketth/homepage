@@ -1,5 +1,75 @@
 import { cat, cd, ls, rm } from "./FakeFiles";
 import { goto } from "$app/navigation";
+import { sanitize } from "$lib/Terminal/Sanitize";
+
+type Invokable = (flags: string[], args: string[]) => string
+
+class Command {
+  constructor(
+    public name: string,
+    public call: Invokable,
+    public description: string,
+    public hidden: boolean = false,
+  ) {}
+}
+
+const commands = [
+  new Command(
+    "echo",
+    (_, args) => sanitize(args.join(" ")),
+    "type out input"
+  ),
+  new Command(
+    "ls",
+    ls,
+    "list content"
+  ),
+  new Command(
+    "cat",
+    cat,
+    "type out file contents"
+  ),
+  new Command(
+    "cd",
+    cd,
+    "change directory"
+  ),
+  new Command(
+    "rm",
+    rm,
+    "remove files"
+  ),
+  new Command(
+    "help",
+    help,
+    "display help"
+  ),
+  new Command(
+    "thecake",
+    (_1, _2) => aperture,
+    "is a lie"
+  ),
+  new Command(
+    "exit",
+    (_1, _2) => { goto("/cool_vid").then(); return "" },
+    "close terminal"
+  ),
+  new Command(
+    "reboot",
+    (_1, _2) => { location.reload(); return "" },
+    "restart site"
+  ),
+]
+
+function help(_1: string[], _2: string[]): string {
+  const longest = commands.map(c => c.name.length).sort().findLast(() => true) || 0
+  return commands
+    .filter(c => !c.hidden)
+    .map(c => `${c.name}:${" ".repeat(longest-c.name.length)} ${c.description}`)
+    .join("\n")
+}
+
+const commandMap = new Map<string, Invokable>(commands.map(c => [c.name, c.call]))
 
 export function interpret(input: string): string {
   const trimmed = input.trim()
@@ -12,27 +82,12 @@ export function interpret(input: string): string {
   const cmd = tokens[0]
   const [flags, args] = parseArgs(tokens.slice(1))
 
-  switch (cmd) {
-    case "echo":
-      return args.join(" ")
-    case "thecake":
-      return aperture
-    case "exit":
-      goto("/cool_vid").then()
-      return ""
-    case "reboot":
-      location.reload()
-      return ""
-    case "ls":
-      return ls(flags, args)
-    case "cat":
-      return cat(flags, args)
-    case "cd":
-      return cd(flags, args)
-    case "rm":
-      return rm(flags, args)
-    default:
-      return `command not found: ${cmd}, consult \`help\``
+  const invoke = commandMap.get(cmd)
+
+  if (invoke == undefined) {
+    return `command ${sanitize(cmd)} not found, use help for a list of commands`
+  } else {
+    return invoke(flags, args)
   }
 }
 
