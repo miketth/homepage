@@ -133,21 +133,19 @@ function tokenize(line: string) {
     const char = line[i];
 
     if (parentheses) {
-      const endOfLine = i == line.length;
+      const endOfLine = i+1 == line.length;
       const nextChar = endOfLine ? " " : line[i + 1];
-      if (char in ["\"", "'"] && nextChar == " ") {
+      if (["\"", "'"].includes(char) && nextChar == " ") {
         parentheses = "";
       } else {
         token += char;
       }
       continue;
-
     }
 
-    if (char in ["\"", "'"] && token.length == 0) {
+    if (["\"", "'"].includes(char) && token.length == 0) {
       parentheses = char;
       continue;
-
     }
 
     if (char == " ") {
