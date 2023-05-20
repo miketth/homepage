@@ -1,4 +1,4 @@
-import adapter from "svelte-adapter-bun";
+import adapter from "@sveltejs/adapter-cloudflare";
 import { vitePreprocess } from '@sveltejs/kit/vite';
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -9,10 +9,11 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			precompress: {
-				brotli: true,
-				gzip: true,
-			},
+			// See below for an explanation of these options
+			routes: {
+				include: ['/*'],
+				exclude: ['<all>']
+			}
 		})
 	}
 };
