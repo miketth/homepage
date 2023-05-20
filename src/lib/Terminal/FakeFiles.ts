@@ -24,7 +24,7 @@ function abs(filename: string): string {
   if (filename[0] == "/") { // absolute
     return filename
   } else {
-    return sanitize(`${pwd}/${filename}`)
+    return vol.realpathSync(`${pwd}/${filename}`) as string
   }
 }
 
