@@ -8,7 +8,8 @@ let outputs = []
 
 let defaultcmds = [
   "cat welcome.txt",
-  "cat welcome2.txt"
+  "mdcat about/me.md",
+  "ls -la"
 ]
 
 let input;
@@ -25,7 +26,7 @@ onMount(async () => {
   }
   disabled = false
   await tick()
-  input.focus()
+  input?.focus()
 })
 
 let command = ""
@@ -97,5 +98,22 @@ async function keypress(ev) {
   pre {
       margin-top: .1em;
       margin-bottom: .15em;
+  }
+
+  div :global(p) {
+      margin: 0;
+      padding: 0;
+  }
+
+  div :global(ul) {
+      margin: 0;
+      margin-top: -2em;
+      margin-bottom: -1em;
+  }
+
+  div :global(li) {
+      margin: 0;
+      margin-bottom: -1em;
+      padding: 0;
   }
 </style>

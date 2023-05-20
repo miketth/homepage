@@ -1,12 +1,20 @@
 import { Volume } from "memfs-browser";
 import { user } from "$lib/Terminal/CommonData"
 import { sanitize } from "./Sanitize";
+import { padLeft } from "$lib/Utils";
+import MarkdownIt from "markdown-it";
 
 
 const vol = Volume.fromJSON({
-  "welcome.txt": "Welcome to my website!",
-  "test/asd.txt": "This is asd",
-  "test/test2/lol.txt": "oh hi",
+  "welcome.txt": "Hi, I'm Mike, welcome to my website!",
+  "about/me.md": `I am a maker at hearth.
+I like creating all kinds of projects, for example:
+- Electronics (Arduino, ARM SBCs, sensors)
+- Home automation 
+- Home lab, testing interesting DevOps tools
+- Various kinds of development (Go, Kotlin, JS)`,
+  "about/funky.txt": `Since you found this file, I see you must be the curious type as well.
+Asides from that, I like going on walks and drinking all kinds of hot beverages, be it coffee or tea.`,
 })
 
 export let pwd = "/"
@@ -16,14 +24,19 @@ function abs(filename: string): string {
   if (filename[0] == "/") { // absolute
     return filename
   } else {
-    return `${pwd}/${filename}`
+    return sanitize(`${pwd}/${filename}`)
   }
 }
 
 interface entry {
   name: string,
-  isDirectory(): boolean
+  isDirectory: boolean,
+  size: number,
+  created: Date,
+  nlink: number,
 }
+
+const folderSize = 0
 
 export function ls(flags: string[], args: string[]): string {
   const list = flags.includes("l")
@@ -35,28 +48,39 @@ export function ls(flags: string[], args: string[]): string {
       path = abs(args[0])
     }
 
-    const entries: entry[] = []
+    const names: string[] = []
     if (all) {
-      [".", ".."].forEach(name => entries.push({
-        name,
-        isDirectory: () => true,
-      }))
+      names.push(".", "..")
     }
 
-    const folderEntries = vol.readdirSync(path, {withFileTypes: true}) as entry[]
+    names.push( ... vol.readdirSync(path).map(it => it.toString()) )
 
-    entries.push( ...folderEntries )
+    const entries: entry[] = names.map(name => {
+      const stats = vol.statSync(`${path}/${name}`)
+      return {
+        name: name,
+        isDirectory: stats.isDirectory(),
+        size: stats.size,
+        created: stats.birthtime,
+        nlink: stats.nlink,
+      }
+    })
 
+    const sizeChars = (entries.map(e => e.size).sort().findLast(() => true) || 0).toString().length
 
     return entries.map(file => {
       if (!list) {
-        return `<span style="color: ${file.isDirectory() ? "#50fa7b" : "#fff" }">${sanitize(file.name)}</span>`
+        return `<span style="color: ${file.isDirectory ? "#50fa7b" : "#fff" }">${sanitize(file.name)}</span>`
       }
 
-      const mode = file.isDirectory() ? `drwxrwxrwx` : `-rwxrwxrwx`
-      const inodes = file.isDirectory() ? 2 : 1
+      const mode = file.isDirectory ? `drwxrwxrwx` : `-rwxrwxrwx`
 
-      return `${mode} ${inodes} ${user} ${user} size date <span style="color: ${file.isDirectory() ? "#50fa7b" : "#fff" }">${sanitize(file.name)}</span>`
+      const size = padLeft(`${file.size}`, sizeChars)
+      const month = file.created.toLocaleString('default', { month: 'short' })
+      const day = padLeft(`${file.created.getDay()}`, 2)
+      const time = `${padLeft(`${file.created.getHours()}`, 2, "0")}:${padLeft(`${file.created.getMinutes()}`, 2, "0")}`
+
+      return `${mode} ${file.nlink} ${user} ${user} ${size} ${month} ${day} ${time} <span style="color: ${file.isDirectory ? "#50fa7b" : "#fff" }">${sanitize(file.name)}</span>`
     }).join(list ? "\n" : " ")
   } catch (e) {
     return "ls: file not found"
@@ -77,10 +101,10 @@ export function cat(flags: string[], args: string[]): string {
     return "usage: cat <filename> [filenames...]"
   }
   try {
-    return vol.readFileSync(abs(args[0]), 'utf-8') as string
+    return sanitize(vol.readFileSync(abs(args[0]), 'utf-8') as string)
   } catch (e) {
     //todo
-    return `cat: file ${args[0]} not found`
+    return `cat: file ${sanitize(args[0])} not found`
   }
 }
 
@@ -90,7 +114,20 @@ export function rm(flags: string[], args: string[]): string {
     return ""
   } catch (e) {
     //todo
-    return `rm: file ${args[0]} not found`
+    return `rm: file ${sanitize(args[0])} not found`
   }
 }
 
+const md = new MarkdownIt()
+
+export function mdcat(flags: string[], args: string[]): string {
+  if (args.length < 1) {
+    return "usage: mdcat <filename> [filenames...]"
+  }
+  try {
+    return md.render(vol.readFileSync(abs(args[0]), 'utf-8') as string)
+  } catch (e) {
+    //todo
+    return `mdcat: file ${sanitize(args[0])} not found`
+  }
+}

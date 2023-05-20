@@ -1,6 +1,7 @@
-import { cat, cd, ls, rm } from "./FakeFiles";
+import { cat, cd, ls, mdcat, rm } from "./FakeFiles";
 import { goto } from "$app/navigation";
 import { sanitize } from "$lib/Terminal/Sanitize";
+import { padRight } from "$lib/Utils";
 
 type Invokable = (flags: string[], args: string[]) => string
 
@@ -28,6 +29,11 @@ const commands = [
     "cat",
     cat,
     "type out file contents"
+  ),
+  new Command(
+    "mdcat",
+    mdcat,
+    "render file as MarkDown"
   ),
   new Command(
     "cd",
@@ -65,7 +71,7 @@ function help(_1: string[], _2: string[]): string {
   const longest = commands.map(c => c.name.length).sort().findLast(() => true) || 0
   return commands
     .filter(c => !c.hidden)
-    .map(c => `${c.name}:${" ".repeat(longest-c.name.length)} ${c.description}`)
+    .map(c => `${padRight(c.name+":", longest+1)} ${c.description}`)
     .join("\n")
 }
 
