@@ -9,7 +9,7 @@ export const GET = (({ platform }) => {
 export const POST = (async ({ platform }) => {
   let ricks = 0
   if (platform?.env?.HOMEPAGE) {
-    ricks = platform.env.HOMEPAGE.get("ricks", { type: "json" }) || 0
+    ricks = await platform.env.HOMEPAGE.get("ricks", { type: "json" }) || 0
     ricks++
     await platform.env.HOMEPAGE.put("ricks", JSON.stringify(ricks))
   }
