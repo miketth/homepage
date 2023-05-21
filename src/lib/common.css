@@ -2,6 +2,12 @@ body {
     font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
+html, body {
+    background-color: #282629;
+    margin: 0;
+    padding: 0;
+}
+
 body > div {
     background-color: #282629;
     margin: 0;
