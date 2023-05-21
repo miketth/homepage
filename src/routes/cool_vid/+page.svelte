@@ -1,13 +1,14 @@
 <script>
   import rickvid from "$lib/assets/rick.mp4";
+  import { page } from "$app/stores"
   import { fade } from "svelte/transition";
   import ordinal from "ordinal";
 
-  let n = 1
+  export let data;
 </script>
 
 <div transition:fade>
-  <h1>Thanks for being the {ordinal(n)} customer!</h1>
+  <h1>Thanks for being the {ordinal(data.ricks)} customer!</h1>
   <video autoplay controls>
     <source src="{rickvid}" type="video/mp4">
   </video>
