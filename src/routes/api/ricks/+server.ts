@@ -7,11 +7,9 @@ export const GET = (({ platform }) => {
 }) satisfies RequestHandler
 
 export const POST = (({ platform }) => {
-  let ricks = 0
+  let ricks = 1
   if (platform?.env?.HOMEPAGE) {
-    ricks = platform.env.HOMEPAGE["ricks"] || 0
-    ricks++
-    platform.env.HOMEPAGE["ricks"] = ricks
+    ricks = ++platform.env.HOMEPAGE["ricks"] || 1
   }
 
   return json(ricks)
