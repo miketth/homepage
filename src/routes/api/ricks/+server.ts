@@ -1,8 +1,11 @@
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from './$types';
 
-export const GET = (({ platform }) => {
-  const ricks = platform?.env?.HOMEPAGE["ricks"] || 0
+export const GET = (async ({ platform }) => {
+  let ricks = 0
+  if (platform?.env?.HOMEPAGE) {
+    ricks = await platform.env.HOMEPAGE.get("ricks", { type: "json" }) || 0
+  }
   return json(ricks)
 }) satisfies RequestHandler
 
