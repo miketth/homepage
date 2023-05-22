@@ -50,7 +50,7 @@ async function keypress(ev) {
         <Prompt/>
       {/key}
       {#if output.command === null}
-        <input bind:this={input} {disabled} bind:value={command} on:keypress={keypress} type="text" class="in">
+        <input bind:this={input} {disabled} bind:value={command} on:keypress={keypress} type="text" class="in" aria-label="Terminal prompt">
       {:else }
         <div class="cmd">{output.command}</div>
       {/if}
