@@ -1,8 +1,13 @@
 <script>
+// @ts-nocheck
+
 import Prompt from "$lib/Terminal/Prompt.svelte";
 import { interpret } from "$lib/Terminal/CommandInterpreter.ts";
 import { onMount, tick } from "svelte";
 import { sleep } from "$lib/Utils.ts";
+import NoScript from "./NoScript.svelte";
+
+let script = typeof window !== 'undefined'
 
 let outputs = []
 
@@ -15,21 +20,8 @@ let defaultcmds = [
 let input;
 let disabled = true;
 
-onMount(async () => {
-  for (const cmd of defaultcmds) {
-    for (const char of cmd) {
-      command += char
-      await sleep(50)
-    }
-    await keypress({key: "Enter"})
-    await sleep(200)
-  }
-  disabled = false
-  await tick()
-  input?.focus()
-})
-
 let command = ""
+
 async function keypress(ev) {
   if (ev.key === "Enter") {
     let out = interpret(command)
@@ -41,24 +33,47 @@ async function keypress(ev) {
   }
 }
 
+if (script) {
+  onMount(async () => {
+    for (const cmd of defaultcmds) {
+      for (const char of cmd) {
+        command += char
+        await sleep(50)
+      }
+      await keypress({key: "Enter"})
+      await sleep(200)
+    }
+    disabled = false
+    await tick()
+    input?.focus()
+  })
+} else {
+  outputs = defaultcmds.map(command => ({ command, out: interpret(command) }))
+}
+
+
+
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="inner" on:click={input.focus()}>
-  {#each [...outputs, {out: null, command: null}] as output, i}
-    <div class="line">
-      {#key i}
-        <Prompt/>
-      {/key}
-      {#if output.command === null}
-        <input bind:this={input} {disabled} bind:value={command} on:keypress={keypress} type="text" class="in" aria-label="Terminal prompt">
-      {:else }
-        <div class="cmd">{output.command}</div>
+  <NoScript {script}>
+    {#each [...outputs, {out: null, command: null}] as output, i}
+      <div class="line">
+        {#key i}
+          <Prompt/>
+        {/key}
+        {#if output.command === null}
+          <input bind:this={input} {disabled} bind:value={command} on:keypress={keypress} type="text" class="in" aria-label="Terminal prompt" autocomplete="off">
+        {:else }
+          <div class="cmd">{output.command}</div>
+        {/if}
+      </div>
+      {#if output.command !== null}
+        <pre>{@html output.out}</pre>
       {/if}
-    </div>
-    {#if output.command !== null}
-      <pre>{@html output.out}</pre>
-    {/if}
-  {/each}
+    {/each}
+  </NoScript>
 </div>
 
 <style>
