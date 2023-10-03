@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import TerminalHeader from "$lib/Terminal/TerminalHeader.svelte";
   import TerminalContent from "$lib/Terminal/TerminalContent.svelte";
   import { fade } from "svelte/transition";

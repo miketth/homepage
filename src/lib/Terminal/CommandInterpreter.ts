@@ -52,22 +52,22 @@ const commands = [
   ),
   new Command(
     "thecake",
-    (_1, _2) => aperture,
+    () => aperture,
     "is a lie"
   ),
   new Command(
     "exit",
-    (_1, _2) => { goto("/cool_vid").then(); return "" },
+    () => { goto("/cool_vid").then(); return "" },
     "close terminal"
   ),
   new Command(
     "reboot",
-    (_1, _2) => { location.reload(); return "" },
+    () => { location.reload(); return "" },
     "restart site"
   ),
 ]
 
-function help(_1: string[], _2: string[]): string {
+function help(): string {
   const longest = commands.map(c => c.name.length).sort().findLast(() => true) || 0
   return commands
     .filter(c => !c.hidden)

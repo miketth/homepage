@@ -1,29 +1,37 @@
-<script>
-// @ts-nocheck
+<script lang="ts">
+  import Prompt from "$lib/Terminal/Prompt.svelte";
+  import { interpret } from "$lib/Terminal/CommandInterpreter";
+  import { onMount, tick } from "svelte";
+  import { sleep } from "$lib/Utils";
+  import NoScript from "./NoScript.svelte";
 
-import Prompt from "$lib/Terminal/Prompt.svelte";
-import { interpret } from "$lib/Terminal/CommandInterpreter.ts";
-import { onMount, tick } from "svelte";
-import { sleep } from "$lib/Utils.ts";
-import NoScript from "./NoScript.svelte";
+  let script = typeof window !== 'undefined'
 
-let script = typeof window !== 'undefined'
+  interface output {
+    command: string,
+    out: string,
+  }
 
-let outputs = []
+  let outputs: output[] = []
 
-let defaultcmds = [
-  "cat welcome.txt",
-  "mdcat about/me.md",
-  "ls -la"
-]
+  let defaultcmds = [
+    "cat welcome.txt",
+    "mdcat about/me.md",
+    "ls -la"
+  ]
 
-let input;
-let disabled = true;
+  let input: HTMLInputElement|null = null;
+  let disabled = true;
 
-let command = ""
+  let command = ""
 
-async function keypress(ev) {
-  if (ev.key === "Enter") {
+  async function keypress(ev: KeyboardEvent) {
+    if (ev.key === "Enter") {
+      await doInterpret()
+    }
+  }
+
+  async function doInterpret() {
     let out = interpret(command)
     outputs = [...outputs, { command, out }]
     command = ""
@@ -31,32 +39,29 @@ async function keypress(ev) {
     await tick()
     input?.focus()
   }
-}
 
-if (script) {
-  onMount(async () => {
-    for (const cmd of defaultcmds) {
-      for (const char of cmd) {
-        command += char
-        await sleep(50)
+  if (script) {
+    onMount(async () => {
+      for (const cmd of defaultcmds) {
+        for (const char of cmd) {
+          command += char
+          await sleep(50)
+        }
+        await doInterpret()
+        await sleep(200)
       }
-      await keypress({key: "Enter"})
-      await sleep(200)
-    }
-    disabled = false
-    await tick()
-    input?.focus()
-  })
-} else {
-  outputs = defaultcmds.map(command => ({ command, out: interpret(command) }))
-}
-
-
-
+      disabled = false
+      await tick()
+      input?.focus()
+    })
+  } else {
+    outputs = defaultcmds.map(command => ({ command, out: interpret(command) }))
+  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="inner" on:click={input.focus()}>
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+<div role="main" class="inner" on:click={() => input?.focus()}>
   <NoScript {script}>
     {#each [...outputs, {out: null, command: null}] as output, i}
       <div class="line">
@@ -70,6 +75,7 @@ if (script) {
         {/if}
       </div>
       {#if output.command !== null}
+        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         <pre>{@html output.out}</pre>
       {/if}
     {/each}

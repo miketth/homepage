@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import WindowButton from "$lib/Terminal/WindowButton.svelte";
   import { goto } from "$app/navigation";
 

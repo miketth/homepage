@@ -36,8 +36,6 @@ interface entry {
   nlink: number,
 }
 
-const folderSize = 0
-
 export function ls(flags: string[], args: string[]): string {
   const list = flags.includes("l")
   const all = flags.includes("a")

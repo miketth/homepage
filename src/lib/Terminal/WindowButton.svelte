@@ -1,7 +1,9 @@
-<script>
+<script lang="ts">
   export let color = '#FFD24A'
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <span on:click class="btn" style="background-color: {color}"></span>
 
 <style>

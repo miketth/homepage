@@ -1,14 +1,15 @@
-<script>
+<script lang="ts">
   import rickvid from "$lib/assets/rick.mp4";
-  import { page } from "$app/stores"
   import { fade } from "svelte/transition";
   import ordinal from "ordinal";
+  import type { Ricks } from "$lib/Types";
 
-  export let data;
+  export let data: Ricks;
 </script>
 
 <div transition:fade>
   <h1>Thanks for being the {ordinal(data.ricks)} customer!</h1>
+  <!-- svelte-ignore a11y-media-has-caption -->
   <video autoplay controls>
     <source src="{rickvid}" type="video/mp4">
   </video>
