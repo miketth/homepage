@@ -21,8 +21,8 @@
         let x = Math.random() * (width - 100);
         let y = Math.random() * (height - 100);
 
-        huntee.style["margin-left"] = x + "px";
-        huntee.style["margin-top"] = y + "px";
+        huntee.style.marginLeft = `${x}px`;
+        huntee.style.marginTop = `${y}px`;
 
         jumped++;
     }
