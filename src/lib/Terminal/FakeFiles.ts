@@ -90,7 +90,15 @@ export function cd(flags: string[], args: string[]): string {
   if (args.length != 1) {
     return sanitize("usage: cd <path>")
   }
-  pwd = vol.realpathSync(abs(args[0])) as string
+  try {
+    pwd = vol.realpathSync(abs(args[0])) as string
+  } catch (e) {
+    if (e.code && e.code === "ENOENT") {
+      return `cd: not a directory: ${sanitize(args[0])}`
+    } else {
+      console.error(e)
+    }
+  }
   return ""
 }
 
