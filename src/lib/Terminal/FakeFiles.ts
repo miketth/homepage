@@ -1,3 +1,4 @@
+import "buffer-shim"
 import { Volume } from "memfs-browser"
 import { user } from "$lib/Terminal/CommonData"
 import { sanitize } from "./Sanitize"
