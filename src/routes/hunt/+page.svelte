@@ -1,5 +1,4 @@
 <script lang="ts">
-import { fade } from "svelte/transition"
 import { goto } from "$app/navigation"
 import { resolve } from "$app/paths"
 
@@ -29,7 +28,7 @@ function troll() {
 }
 </script>
 
-<div bind:this={container} class="container" transition:fade>
+<div bind:this={container} class="container">
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
     <div bind:this={huntee} onmouseover={troll} class="huntee">

@@ -1,6 +1,5 @@
 <script lang="ts">
 import rickvid from "$lib/assets/rick.mp4"
-import { fade } from "svelte/transition"
 import ordinal from "ordinal"
 import { resolve } from "$app/paths"
 import type { Ricks } from "$lib/Types"
@@ -8,7 +7,7 @@ import type { Ricks } from "$lib/Types"
 let { data }: { data: Ricks } = $props()
 </script>
 
-<div transition:fade>
+<div>
     <h1>Thanks for being the {ordinal(data.ricks)} customer!</h1>
     <video autoplay controls>
         <source src={rickvid} type="video/mp4" />

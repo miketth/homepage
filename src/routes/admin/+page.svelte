@@ -1,5 +1,4 @@
 <script lang="ts">
-import { fade } from "svelte/transition"
 import { goto } from "$app/navigation"
 import { resolve } from "$app/paths"
 
@@ -8,7 +7,7 @@ function rick() {
 }
 </script>
 
-<div transition:fade>
+<div>
     <h1>Admin area</h1>
     <form
         method="post"
