@@ -1,4 +1,5 @@
 <script lang="ts">
+let { children } = $props()
 import "$lib/common.css"
 import {onNavigate} from "$app/navigation";
 
@@ -20,4 +21,4 @@ onNavigate((navigation) => {
     <meta name="description" content="Personal, interactive website of Miklós Tóth." />
 </svelte:head>
 
-<slot />
+{@render children()}
