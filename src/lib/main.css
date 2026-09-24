@@ -7,9 +7,9 @@ body {
 button {
     background-color: #656066;
     color: white;
-    margin: .2em;
-    border: .1em #282629;
-    border-radius: .5em;
+    margin: 0.2em;
+    border: 0.1em #282629;
+    border-radius: 0.5em;
     font-size: 12pt;
-    padding: .1em;
+    padding: 0.1em;
 }

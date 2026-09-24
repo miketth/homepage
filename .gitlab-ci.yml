@@ -1,15 +1,15 @@
-stages: [ 🔨, 📦, ☸️ ]
+stages: [🔨, 📦, ☸️]
 
 #variables:
 #  KUBE_DEPLOYMENT: homepage
 
 include:
-#  - project: 'disappointment-industries/cicd-templates'
-#    ref: main
-#    file: 'container-multi.yml'
-  - project: 'disappointment-industries/cicd-templates'
-    ref: main
-    file: 'node.yml'
+    #  - project: 'disappointment-industries/cicd-templates'
+    #    ref: main
+    #    file: 'container-multi.yml'
+    - project: "disappointment-industries/cicd-templates"
+      ref: main
+      file: "node.yml"
 #  - project: 'disappointment-industries/cicd-templates'
 #    ref: main
 #    file: 'kube-restart.yml'

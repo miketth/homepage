@@ -1,7 +1,7 @@
 <script lang="ts">
-  import "$lib/main.css"
+import "$lib/main.css"
 
-  import Terminal from "$lib/Terminal/Terminal.svelte";
+import Terminal from "$lib/Terminal/Terminal.svelte"
 </script>
 
-<Terminal/>
+<Terminal />

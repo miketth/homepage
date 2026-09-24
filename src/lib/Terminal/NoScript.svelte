@@ -1,11 +1,13 @@
 <script lang="ts">
-    export let script = false;
+import type { Snippet } from "svelte"
+
+let { script = false, children }: { script?: boolean; children: Snippet } = $props()
 </script>
 
 {#if script}
-    <slot/>
+	{@render children()}
 {:else}
-    <noscript>
-        <slot/>
-    </noscript>
+	<noscript>
+		{@render children()}
+	</noscript>
 {/if}

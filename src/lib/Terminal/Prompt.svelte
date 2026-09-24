@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { pwd } from "$lib/Terminal/FakeFiles";
+import { pwd } from "$lib/Terminal/FakeFiles"
 
-  import { user, host } from "$lib/Terminal/CommonData";
+import { host, user } from "$lib/Terminal/CommonData"
 
-  const dir = pwd
+const dir = pwd
 </script>
 
 <div class="prompt">{user}@{host}:{dir}$</div>
 
 <style>
-  .prompt {
-      margin-right: 1em;
-      color: #A4CC35;
-  }
+.prompt {
+    margin-right: 1em;
+    color: #a4cc35;
+}
 </style>

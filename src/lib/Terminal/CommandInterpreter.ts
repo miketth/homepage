@@ -1,103 +1,79 @@
-import { cat, cd, ls, mdcat, rm } from "./FakeFiles";
-import { goto } from "$app/navigation";
-import { sanitize } from "$lib/Terminal/Sanitize";
-import { padRight } from "$lib/Utils";
+import { cat, cd, ls, mdcat, rm } from "./FakeFiles"
+import { goto } from "$app/navigation"
+import { resolve } from "$app/paths"
+import { sanitize } from "$lib/Terminal/Sanitize"
+import { padRight } from "$lib/Utils"
 
 type Invokable = (flags: string[], args: string[]) => string
 
 class Command {
-  constructor(
-    public name: string,
-    public call: Invokable,
-    public description: string,
-    public hidden: boolean = false,
-  ) {}
+    constructor(
+        public name: string,
+        public call: Invokable,
+        public description: string,
+        public hidden: boolean = false,
+    ) {}
 }
 
 const commands = [
-  new Command(
-    "echo",
-    (_, args) => sanitize(args.join(" ")),
-    "type out input"
-  ),
-  new Command(
-    "ls",
-    ls,
-    "list content"
-  ),
-  new Command(
-    "cat",
-    cat,
-    "type out file contents"
-  ),
-  new Command(
-    "mdcat",
-    mdcat,
-    "render file as MarkDown"
-  ),
-  new Command(
-    "cd",
-    cd,
-    "change directory"
-  ),
-  new Command(
-    "rm",
-    rm,
-    "remove files"
-  ),
-  new Command(
-    "help",
-    help,
-    "display help"
-  ),
-  new Command(
-    "thecake",
-    () => aperture,
-    "is a lie"
-  ),
-  new Command(
-    "exit",
-    () => { goto("/cool_vid").then(); return "" },
-    "close terminal"
-  ),
-  new Command(
-    "reboot",
-    () => { location.reload(); return "" },
-    "restart site"
-  ),
+    new Command("echo", (_, args) => sanitize(args.join(" ")), "type out input"),
+    new Command("ls", ls, "list content"),
+    new Command("cat", cat, "type out file contents"),
+    new Command("mdcat", mdcat, "render file as MarkDown"),
+    new Command("cd", cd, "change directory"),
+    new Command("rm", rm, "remove files"),
+    new Command("help", help, "display help"),
+    new Command("thecake", () => aperture, "is a lie"),
+    new Command(
+        "exit",
+        () => {
+            goto(resolve("/cool_vid")).then()
+            return ""
+        },
+        "close terminal",
+    ),
+    new Command(
+        "reboot",
+        () => {
+            location.reload()
+            return ""
+        },
+        "restart site",
+    ),
 ]
 
 function help(): string {
-  const longest = commands.map(c => c.name.length).sort().findLast(() => true) || 0
-  return commands
-    .filter(c => !c.hidden)
-    .map(c => `${padRight(c.name+":", longest+1)} ${c.description}`)
-    .join("\n")
+    const longest = commands
+        .map((c) => c.name.length)
+        .sort()
+        .findLast(() => true) || 0
+    return commands
+        .filter((c) => !c.hidden)
+        .map((c) => `${padRight(c.name + ":", longest + 1)} ${c.description}`)
+        .join("\n")
 }
 
-const commandMap = new Map<string, Invokable>(commands.map(c => [c.name, c.call]))
+const commandMap = new Map<string, Invokable>(commands.map((c) => [c.name, c.call]))
 
 export function interpret(input: string): string {
-  const trimmed = input.trim()
-  const tokens = tokenize(trimmed)
+    const trimmed = input.trim()
+    const tokens = tokenize(trimmed)
 
-  if (tokens.length < 1) {
-    return ""
-  }
+    if (tokens.length < 1) {
+        return ""
+    }
 
-  const cmd = tokens[0]
-  const [flags, args] = parseArgs(tokens.slice(1))
+    const cmd = tokens[0]
+    const [flags, args] = parseArgs(tokens.slice(1))
 
-  const invoke = commandMap.get(cmd)
+    const invoke = commandMap.get(cmd)
 
-  if (invoke == undefined) {
-    return `command ${sanitize(cmd)} not found, use help for a list of commands`
-  } else {
-    return invoke(flags, args)
-  }
+    if (invoke == undefined) {
+        return `command ${sanitize(cmd)} not found, use help for a list of commands`
+    } else {
+        return invoke(flags, args)
+    }
 }
-
-
 
 const aperture = `              .,-:;//;:=,
           . :H@@@MM@M#H/.,+%;,
@@ -124,77 +100,78 @@ const aperture = `              .,-:;//;:=,
 `
 
 function tokenize(line: string) {
-  let tokens: string[] = [];
+    let tokens: string[] = []
 
-  let token = "";
-  let parentheses = "";
+    let token = ""
+    let parentheses = ""
 
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i]
 
-    if (parentheses) {
-      const endOfLine = i+1 == line.length;
-      const nextChar = endOfLine ? " " : line[i + 1];
-      if (["\"", "'"].includes(char) && nextChar == " ") {
-        parentheses = "";
-      } else {
-        token += char;
-      }
-      continue;
+        if (parentheses) {
+            const endOfLine = i + 1 == line.length
+            const nextChar = endOfLine ? " " : line[i + 1]
+            if (['"', "'"].includes(char) && nextChar == " ") {
+                parentheses = ""
+            } else {
+                token += char
+            }
+            continue
+        }
+
+        if (['"', "'"].includes(char) && token.length == 0) {
+            parentheses = char
+            continue
+        }
+
+        if (char == " ") {
+            tokens.push(token)
+            token = ""
+            continue
+        }
+
+        token += char
     }
 
-    if (["\"", "'"].includes(char) && token.length == 0) {
-      parentheses = char;
-      continue;
-    }
+    tokens.push(token)
 
-    if (char == " ") {
-      tokens.push(token);
-      token = "";
-      continue;
+    tokens = tokens.filter((token) => token.length > 0)
 
-    }
-
-    token += char;
-  }
-
-  tokens.push(token);
-
-  tokens = tokens.filter(token => token.length > 0);
-
-  return tokens;
+    return tokens
 }
 
 function parseArgs(tokens: string[]): [string[], string[]] {
-  let nomoreflag = false;
+    let nomoreflag = false
 
-  const flags: string[] = [];
-  const args: string[] = [];
+    const flags: string[] = []
+    const args: string[] = []
 
-  tokens.forEach(token => {
-    if (nomoreflag) {
-      args.push(token);
-      return;
-    }
+    tokens.forEach((token) => {
+        if (nomoreflag) {
+            args.push(token)
+            return
+        }
 
-    if (token == "--") {
-      nomoreflag = true;
-      return;
-    }
+        if (token == "--") {
+            nomoreflag = true
+            return
+        }
 
-    if (token.length >= 2 && token.slice(0, 2) == "--") {
-      flags.push(token.slice(2));
-      return;
-    }
+        if (token.length >= 2 && token.slice(0, 2) == "--") {
+            flags.push(token.slice(2))
+            return
+        }
 
-    if (token[0] == "-") {
-      token.slice(1).split("").forEach(flag => flags.push(flag));
-      return;
-    }
+        if (token[0] == "-") {
+            token
+                .slice(1)
+                .split("")
+                .forEach((flag) => flags.push(flag))
+            return
+        }
 
-    args.push(token);
-  });
+        args.push(token)
+    })
 
-
-  return [flags, args];
+    return [flags, args]
 }

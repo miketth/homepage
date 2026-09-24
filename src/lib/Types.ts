@@ -1,3 +1,3 @@
 export interface Ricks {
-  ricks: number,
+    ricks: number
 }

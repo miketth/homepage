@@ -1,0 +1,19 @@
+{
+    "unstable": ["fmt-component"],
+    "fmt": {
+        "useTabs": false,
+        "singleQuote": false,
+        "indentWidth": 4,
+        "semiColons": false,
+        "lineWidth": 100
+    },
+    "lint": {
+        "rules": {
+            "tags": ["recommended"],
+            "exclude": ["no-explicit-any", "no-sloppy-imports"]
+        }
+    },
+    "allowScripts": {
+        "allow": ["npm:workerd@1.20260921.1"]
+    }
+}
