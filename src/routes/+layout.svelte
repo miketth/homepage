@@ -1,7 +1,7 @@
 <script lang="ts">
 let { children } = $props()
 import "$lib/common.css"
-import {onNavigate} from "$app/navigation";
+import { onNavigate } from "$app/navigation"
 
 onNavigate((navigation) => {
     if (!document.startViewTransition) return
@@ -13,7 +13,6 @@ onNavigate((navigation) => {
         })
     })
 })
-
 </script>
 
 <svelte:head>
